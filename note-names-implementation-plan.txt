@@ -1,0 +1,276 @@
+# Implementation Plan: Display Note Names on Sheet Music
+
+## Overview
+Add pitch name labels (e.g., "C4", "G#5") next to each note to help identify notes, especially helpful for high ledger lines.
+
+## Prerequisites
+- OSMD already rendering sheet music successfully
+- Understanding of OSMD's object model hierarchy
+
+---
+
+## Phase 1: Understand OSMD Data Structure
+
+**Goal**: Learn how to traverse OSMD's graphical sheet to find all notes
+
+**Steps**:
+1. Study the hierarchy: osmd.GraphicSheet -> measureList -> measure -> staffEntries -> graphicalVoiceEntries -> notes
+2. Examine GraphicalNote properties:
+   - sourceNote.Pitch - contains pitch information
+   - ParentNoteEntry - contains position data
+   - BoundingBox - position and size for label placement
+
+**Key Objects**:
+- Pitch.ToString() - converts pitch to string (e.g., "C4", "G#5")
+- NoteEntry - position reference for placing labels
+
+---
+
+## Phase 2: Create Note Labeling Function
+
+**Goal**: Implement function to extract and label all notes
+
+**Function Signature**:
+const addNoteLabels = () => {
+  if (!osmd || !osmd.GraphicSheet) return;
+
+  // Traverse OSMD structure
+  osmd.GraphicSheet.measureList.forEach(measureList => {
+    measureList.forEach(measure => {
+      measure.staffEntries.forEach(staffEntry => {
+        staffEntry.graphicalVoiceEntries.forEach(graphicalVoiceEntry => {
+          graphicalVoiceEntry.notes.forEach(graphicalNote => {
+            const pitch = graphicalNote.sourceNote.Pitch;
+            if (!pitch) return;
+
+            const pitchName = pitch.ToString(); // "C4", "G#5", etc.
+
+            // Get position for label
+            const position = calculateLabelPosition(graphicalNote);
+
+            // Create and position label
+            createLabelElement(pitchName, position);
+          });
+        });
+      });
+    });
+  });
+};
+
+---
+
+## Phase 3: Calculate Label Positions
+
+**Goal**: Determine where to place each label (above/below note)
+
+**Approach**:
+const calculateLabelPosition = (graphicalNote: GraphicalNote) => {
+  // Get note position from ParentNoteEntry
+  const noteEntry = graphicalNote.ParentNoteEntry;
+  const absoluteX = noteEntry.ParentMeasure.PositionAndShape.AbsolutePosition.x + noteEntry.RelativePosition.x;
+  const absoluteY = noteEntry.ParentMeasure.PositionAndShape.AbsolutePosition.y + noteEntry.RelativePosition.y;
+
+  // Adjust for stem direction
+  const stemDirection = graphicalNote.sourceNote.StemDirection;
+  const yOffset = stemDirection === StemDirection.Up ? -15 : 25; // pixels
+
+  return {
+    x: absoluteX,
+    y: absoluteY + yOffset,
+    stemDirection
+  };
+};
+
+---
+
+## Phase 4: Create DOM Elements for Labels
+
+**Goal**: Render labels positioned over sheet music
+
+**Implementation**:
+const createLabelElement = (pitchName: string, position: {x: number, y: number}) => {
+  const container = containerRef.value;
+  if (!container) return;
+
+  const label = document.createElement('div');
+  label.className = 'note-name-label';
+  label.textContent = pitchName;
+  label.style.position = 'absolute';
+  label.style.left = `${position.x}px`;
+  label.style.top = `${position.y}px`;
+  label.style.fontSize = '10px';
+  label.style.color = '#666';
+  label.style.fontWeight = 'bold';
+  label.style.pointerEvents = 'none';
+  label.style.fontFamily = 'monospace';
+
+  // Create or use a labels layer
+  let labelsLayer = container.querySelector('.note-labels-layer');
+  if (!labelsLayer) {
+    labelsLayer = document.createElement('div');
+    labelsLayer.className = 'note-labels-layer';
+    labelsLayer.style.position = 'absolute';
+    labelsLayer.style.top = '0';
+    labelsLayer.style.left = '0';
+    labelsLayer.style.width = '100%';
+    labelsLayer.style.height = '100%';
+    labelsLayer.style.pointerEvents = 'none';
+    container.appendChild(labelsLayer);
+  }
+
+  labelsLayer.appendChild(label);
+};
+
+---
+
+## Phase 5: Clear Labels Before Re-render
+
+**Goal**: Remove old labels when music re-renders
+
+const clearLabels = () => {
+  const container = containerRef.value;
+  if (!container) return;
+
+  const labelsLayer = container.querySelector('.note-labels-layer');
+  if (labelsLayer) {
+    labelsLayer.remove();
+  }
+};
+
+---
+
+## Phase 6: Integrate with Render Cycle
+
+**Goal**: Add labels after each render
+
+const render = () => {
+  if (!osmd || !isReady.value) return;
+
+  const endMeasure = props.startMeasure + props.measureCount - 1;
+  osmd.Zoom = 1.4;
+
+  osmd.setOptions({
+    drawFromMeasureNumber: props.startMeasure,
+    drawUpToMeasureNumber: Math.min(endMeasure, totalMeasures.value)
+  });
+
+  try {
+    osmd.render();
+
+    // Apply SVG styling
+    const svg = containerRef.value?.querySelector('svg');
+    if (svg) {
+      svg.style.filter = 'contrast(0.9) brightness(1.1)';
+    }
+
+    // ADD: Render note names if enabled
+    if (showNoteNames.value) {
+      clearLabels();
+      addNoteLabels();
+    }
+
+  } catch (e) {
+    console.error("Render Error:", e);
+  }
+};
+
+---
+
+## Phase 7: Add User Control Toggle
+
+**Goal**: Allow users to enable/disable note names
+
+**In App.vue** (settings panel):
+const showNoteNames = ref(false);
+
+// Add to settings UI:
+<div class="flex items-center justify-between">
+  <span class="text-sm font-medium text-gray-700">Show note names</span>
+  <button
+    @click="showNoteNames = !showNoteNames"
+    class="w-12 h-6 rounded-full transition-colors relative"
+    :class="showNoteNames ? 'bg-brand-brown' : 'bg-gray-200'"
+  >
+    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform"
+         :class="showNoteNames ? 'translate-x-6' : ''"></div>
+  </button>
+</div>
+
+**Pass to ScoreDisplay**:
+<ScoreDisplay
+  :url="musicUrl"
+  :startMeasure="currentMeasure"
+  :measureCount="barsPerPage"
+  :hideMusic="isMusicHidden"
+  :showNoteNames="showNoteNames"
+  @loaded="handleLoaded"
+/>
+
+---
+
+## Phase 8: Handle Edge Cases
+
+**Considerations**:
+
+1. Chords: Multiple notes at same position
+   - Stack labels vertically or show only top/bottom note
+
+2. Multiple Voices: Notes in different voices
+   - Ensure labels don't overlap
+   - May need slight x-offset for different voices
+
+3. High/Low Notes: Extreme ledger lines
+   - Ensure labels don't go outside container
+   - Clamp y-position to container bounds
+
+4. Zoom Changes: Re-calculate positions on zoom
+   - Re-run label placement after zoom changes
+
+5. Performance: Large scores
+   - Consider debouncing label rendering
+   - Only label visible measures
+
+---
+
+## Phase 9: Styling Refinements
+
+**CSS for labels**:
+.note-name-label {
+  position: absolute;
+  font-size: 10px;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 600;
+  color: #6d4c41;
+  text-shadow: 0 0 2px white, 0 0 4px white;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  transition: opacity 0.3s;
+}
+
+---
+
+## Phase 10: Testing
+
+**Test Cases**:
+1. Single line melody
+2. Chords (multiple notes)
+3. Multiple voices
+4. High ledger lines (C6, G6, etc.)
+5. Low ledger lines
+6. Accidentals (sharp, flat, natural)
+7. Navigation between measures
+8. Zoom in/out
+9. Different measure counts (1, 2, 4 bars)
+10. Toggle on/off repeatedly
+
+---
+
+## Summary
+
+This plan follows the approach from issue #1560 by:
+1. Iterating through OSMD's graphical notes
+2. Extracting pitch information
+3. Converting to readable string format
+4. Manually rendering positioned DOM elements as labels
+
+The implementation requires careful position calculation and DOM manipulation, but provides a complete solution for displaying note names to help with ledger line identification.

@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import "@fontsource/playfair-display";
+@import "@fontsource/roboto-mono";
+@import "@fontsource/inter";
+
+@theme {
+  --color-brand-brown: #6d4c41;
+  --color-brand-cream: #f9f8f6;
+  --color-brand-dark: #2c2c2c;
+  
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "Roboto Mono", monospace;
+  --font-sans: "Inter", sans-serif;
+}
+
+body {
+  background-color: var(--color-brand-cream);
+  color: var(--color-brand-dark);
+  font-family: var(--font-sans);
+  /* Dot pattern background */
+  background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom scrollbar to keep it clean */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
