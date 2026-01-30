@@ -1,6 +1,10 @@
 # Notecard - Piano Flashcard App
 
+[![Live Demo](https://img.shields.io/badge/demo-live-green.svg)](https://winitskystan.github.io/notebynote/)
+
 Notecard is a minimalist, elegant web application designed to help pianists memorize music bar-by-bar. It transforms complex MusicXML scores into manageable "cards," allowing for focused practice and memorization.
+
+**Live site:** https://winitskystan.github.io/notebynote/
 
 ## 🎨 Design Philosophy
 The application follows a "classic paper" aesthetic, inspired by traditional physical flashcards and high-quality sheet music printing.
