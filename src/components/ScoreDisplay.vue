@@ -32,7 +32,10 @@ const calculateLabelPosition = (graphicalNote: any) => {
     // If stem is DOWN (2), note head is at the top of the stem.
     
     // OSMD AbsolutePosition for GraphicalNote is usually the note head position.
-    const yOffset = stemDirection === 1 ? 2.5 : -3.5; 
+    const isMobile = window.innerWidth < 768;
+    const yOffset = stemDirection === 1 
+      ? (isMobile ? 2.0 : 2.5) 
+      : (isMobile ? -3.0 : -3.5); 
 
     return {
       x: absPos.x - 0.5, // Center it slightly better

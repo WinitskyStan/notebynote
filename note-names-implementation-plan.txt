@@ -237,14 +237,22 @@ const showNoteNames = ref(false);
 **CSS for labels**:
 .note-name-label {
   position: absolute;
-  font-size: 10px;
-  font-family: 'Roboto Mono', monospace;
-  font-weight: 600;
-  color: #6d4c41;
-  text-shadow: 0 0 2px white, 0 0 4px white;
-  letter-spacing: 0.5px;
+  font-size: 17px;
+  font-family: "Oswald", sans-serif !important;
+  font-weight: 700;
+  color: #c62828; /* Strong Red */
+  text-shadow: 1px 1px 0px #fff, -1px -1px 0px #fff, 1px -1px 0px #fff, -1px 1px 0px #fff;
+  letter-spacing: 0.8px;
   z-index: 10;
   transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .note-name-label {
+    font-size: 11px;
+    letter-spacing: 0.4px;
+  }
 }
 
 ---
