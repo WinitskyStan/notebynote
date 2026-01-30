@@ -198,7 +198,10 @@ const handleFileSelect = () => {
             <div class="h-0.5 w-12 bg-brand-brown/20 mt-2 rounded-full"></div>
         </div>
 
-        <div class="w-full bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden relative group">
+        <div 
+            @click="toggleReveal"
+            class="w-full bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden relative group cursor-pointer active:scale-[0.99] transition-transform"
+        >
             <ScoreDisplay 
                 :url="musicUrl" 
                 :startMeasure="currentMeasure" 
