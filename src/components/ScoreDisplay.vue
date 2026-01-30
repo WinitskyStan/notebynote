@@ -163,10 +163,9 @@ const render = () => {
 
   const endMeasure = props.startMeasure + props.measureCount - 1;
   
-  // Set a good default zoom
-  // osmd.Zoom = 0.7;
-  // osmd.Zoom = 0.9;
-  // osmd.Zoom = 1.4;
+  // Dynamic zoom based on screen width
+  const isMobile = window.innerWidth < 768;
+  osmd.Zoom = isMobile ? 0.7 : 1.0;
 
   osmd.setOptions({
     drawFromMeasureNumber: props.startMeasure,
