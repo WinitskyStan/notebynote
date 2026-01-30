@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 @import "tailwindcss";
 @import "@fontsource/playfair-display";
 @import "@fontsource/roboto-mono";
 @import "@fontsource/inter";
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 
 @theme {
   --color-brand-brown: #6d4c41;
