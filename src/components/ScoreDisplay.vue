@@ -8,6 +8,7 @@ const props = defineProps<{
   startMeasure: number;
   measureCount: number;
   hideMusic: boolean;
+  showNoteNames: boolean;
 }>();
 
 const containerRef = ref<HTMLElement | null>(null);
@@ -16,6 +17,117 @@ const isReady = ref(false);
 const totalMeasures = ref(0);
 
 const emit = defineEmits(['loaded']);
+
+const calculateLabelPosition = (graphicalNote: any) => {
+  if (graphicalNote.PositionAndShape && graphicalNote.PositionAndShape.AbsolutePosition) {
+    const absPos = graphicalNote.PositionAndShape.AbsolutePosition;
+    const stemDirection = graphicalNote.sourceNote.StemDirection;
+    
+    // Move labels closer to the note head
+    // StemDirection: 1 = Up (label below?), 2 = Down (label above?)
+    // Actually, usually if stem is up, note head is at bottom, so label below?
+    // Or if stem is up, we can put label above the stem?
+    // Let's try to put them consistently relative to the note head.
+    // If stem is UP (1), note head is at the bottom of the stem.
+    // If stem is DOWN (2), note head is at the top of the stem.
+    
+    // OSMD AbsolutePosition for GraphicalNote is usually the note head position.
+    const yOffset = stemDirection === 1 ? 2.5 : -1.5; 
+
+    return {
+      x: absPos.x - 0.5, // Center it slightly better
+      y: absPos.y + yOffset,
+      stemDirection
+    };
+  }
+  
+  return { x: 0, y: 0, stemDirection: 0 };
+};
+
+const createLabelElement = (pitchName: string, position: {x: number, y: number}) => {
+  const container = containerRef.value;
+  if (!container) return;
+
+  const label = document.createElement('div');
+  label.className = 'note-name-label';
+  label.textContent = pitchName;
+  label.style.position = 'absolute';
+  
+  const zoom = osmd?.Zoom || 1;
+  const unitInPixels = 10;
+  
+  label.style.left = `${position.x * unitInPixels * zoom}px`; 
+  label.style.top = `${position.y * unitInPixels * zoom}px`;
+  
+  // Centering (width/margin-left handled here to maintain coordinate system logic)
+  label.style.width = '40px';
+  label.style.textAlign = 'center';
+  label.style.marginLeft = '-20px'; 
+
+  // Create or use a labels layer
+  let labelsLayer = container.querySelector('.note-labels-layer') as HTMLElement;
+  if (!labelsLayer) {
+    labelsLayer = document.createElement('div');
+    labelsLayer.className = 'note-labels-layer';
+    labelsLayer.style.position = 'absolute';
+    labelsLayer.style.top = '0';
+    labelsLayer.style.left = '0';
+    labelsLayer.style.width = '100%';
+    labelsLayer.style.height = '100%';
+    labelsLayer.style.pointerEvents = 'none';
+    container.appendChild(labelsLayer);
+  }
+
+  labelsLayer.appendChild(label);
+};
+
+const clearLabels = () => {
+  const container = containerRef.value;
+  if (!container) return;
+
+  const labelsLayer = container.querySelector('.note-labels-layer');
+  if (labelsLayer) {
+    labelsLayer.remove();
+  }
+};
+
+const addNoteLabels = () => {
+  if (!osmd || !osmd.GraphicSheet) return;
+
+  // Traverse OSMD structure
+  osmd.GraphicSheet.MeasureList.forEach((measureList: any) => {
+    measureList.forEach((measure: any) => {
+      const number = measure.measureNumber;
+      // Allow if within range OR if it's the pre-measure (0) and we are at the start (1)
+      const isInRange = (number >= props.startMeasure && number < props.startMeasure + props.measureCount);
+      const isPreMeasure = (props.startMeasure === 1 && number === 0);
+
+      if (!isInRange && !isPreMeasure) return;
+
+      measure.staffEntries.forEach((staffEntry: any) => {
+        staffEntry.graphicalVoiceEntries.forEach((graphicalVoiceEntry: any) => {
+          graphicalVoiceEntry.notes.forEach((graphicalNote: any) => {
+            //if (!graphicalNote.isVisible) return;
+
+            const pitch = graphicalNote.sourceNote.Pitch;
+            if (!pitch) return;
+
+            // Use ToStringShort for clean output like "C4", "Bb5"
+            const pitchName = pitch.ToStringShort ? pitch.ToStringShort() : pitch.ToString();
+
+            // Get position for label
+            const position = calculateLabelPosition(graphicalNote);
+
+            // Create and position label
+            if (position) {
+              createLabelElement(pitchName, position);
+            }
+          });
+        });
+      });
+    });
+  });
+};
 
 const loadScore = async () => {
   if (!containerRef.value) return;
@@ -66,13 +178,20 @@ const render = () => {
       if (svg) {
           svg.style.filter = 'contrast(0.9) brightness(1.1)'; // Slightly softer black
       }
+
+      // Render note names if enabled
+      clearLabels();
+      if (props.showNoteNames) {
+        addNoteLabels();
+      }
+
   } catch (e) {
       console.error("Render Error:", e);
   }
 };
 
 watch(() => props.url, loadScore);
-watch(() => [props.startMeasure, props.measureCount], render);
+watch(() => [props.startMeasure, props.measureCount, props.showNoteNames], render);
 
 onMounted(() => {
   loadScore();

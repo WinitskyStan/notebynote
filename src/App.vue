@@ -20,6 +20,7 @@ const totalMeasures = ref(0);
 const isMusicHidden = ref(true); // Default to hidden per flashcard style
 const showSettings = ref(false);
 const autoHideOnNext = ref(false);
+const showNoteNames = ref(false);
 
 const progress = computed(() => {
   if (totalMeasures.value === 0) return 0;
@@ -81,6 +82,9 @@ const handleKeydown = (e: KeyboardEvent) => {
   } else if (e.code === 'End') {
     e.preventDefault();
     goToEnd();
+  } else if (e.code === 'ArrowUp') {
+    e.preventDefault();
+    showNoteNames.value = !showNoteNames.value;
   } else if (['1', '2', '3', '4'].includes(e.key)) {
     barsPerPage.value = parseInt(e.key);
   }
@@ -152,6 +156,17 @@ const handleFileSelect = () => {
                 </button>
             </div>
 
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-gray-700">Show note names</span>
+                <button 
+                    @click="showNoteNames = !showNoteNames"
+                    class="w-12 h-6 rounded-full transition-colors relative"
+                    :class="showNoteNames ? 'bg-brand-brown' : 'bg-gray-200'"
+                >
+                    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform" :class="showNoteNames ? 'translate-x-6' : ''"></div>
+                </button>
+            </div>
+
             <div>
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-gray-700">Bars per card</span>
@@ -174,16 +189,12 @@ const handleFileSelect = () => {
         </div>
 
         <div class="w-full bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden relative group">
-            <!-- Monospace Label -->
-            <div class="absolute top-24 left-12 text-[10px] font-mono uppercase tracking-[0.2em] text-gray-300 pointer-events-none">
-                PRELUDE NO. 2 • BWV 847
-            </div>
-
             <ScoreDisplay 
                 :url="musicUrl" 
                 :startMeasure="currentMeasure" 
                 :measureCount="barsPerPage"
-                :hideMusic="isMusicHidden" 
+                :hideMusic="isMusicHidden"
+                :showNoteNames="showNoteNames" 
                 @loaded="handleLoaded"
             />
         </div>
@@ -226,6 +237,12 @@ const handleFileSelect = () => {
                     <Keyboard class="w-3 h-3" />
                 </div>
                 <span><span class="text-gray-500 font-bold">Space</span> Reveal</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="p-1 border border-gray-200 rounded shadow-xs bg-white min-w-[24px] text-center font-bold text-gray-500">
+                    &uarr;
+                </div>
+                <span>Note Names</span>
             </div>
             <div class="flex items-center gap-2">
                 <div class="p-1 border border-gray-200 rounded shadow-xs bg-white">

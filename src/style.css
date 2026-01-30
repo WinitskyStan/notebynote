@@ -37,3 +37,16 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+.note-name-label {
+  position: absolute;
+  font-size: 13px;
+  font-family: var(--font-mono) !important;
+  font-weight: 800;
+  color: #8d6e63; /* Lighter/more vibrant brown than brand-brown */
+  text-shadow: 0 0 2px white, 0 0 4px white, 0 0 6px white;
+  letter-spacing: -0.5px;
+  z-index: 10;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
