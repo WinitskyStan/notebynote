@@ -13,7 +13,7 @@ import {
 import ScoreDisplay from './components/ScoreDisplay.vue';
 
 // State
-const musicUrl = ref('/chopin-nocturne-op-9-no-1-b-flat-minor.mxl');
+const musicUrl = ref('./chopin-nocturne-op-9-no-1-b-flat-minor.mxl');
 const currentMeasure = ref(1);
 const barsPerPage = ref(1);
 const totalMeasures = ref(0);
