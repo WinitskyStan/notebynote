@@ -2,6 +2,7 @@
 @import "@fontsource/playfair-display";
 @import "@fontsource/roboto-mono";
 @import "@fontsource/inter";
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 
 @theme {
   --color-brand-brown: #6d4c41;
@@ -40,12 +41,12 @@ body {
 
 .note-name-label {
   position: absolute;
-  font-size: 13px;
-  font-family: var(--font-mono) !important;
-  font-weight: 800;
-  color: #8d6e63; /* Lighter/more vibrant brown than brand-brown */
-  text-shadow: 0 0 2px white, 0 0 4px white, 0 0 6px white;
-  letter-spacing: -0.5px;
+  font-size: 17px;
+  font-family: "Oswald", sans-serif !important;
+  font-weight: 700;
+  color: #c62828; /* Strong Red */
+  text-shadow: 1px 1px 0px #fff, -1px -1px 0px #fff, 1px -1px 0px #fff, -1px 1px 0px #fff;
+  letter-spacing: 0.8px;
   z-index: 10;
   transition: opacity 0.3s;
   pointer-events: none;

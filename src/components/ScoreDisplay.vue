@@ -32,7 +32,7 @@ const calculateLabelPosition = (graphicalNote: any) => {
     // If stem is DOWN (2), note head is at the top of the stem.
     
     // OSMD AbsolutePosition for GraphicalNote is usually the note head position.
-    const yOffset = stemDirection === 1 ? 2.5 : -1.5; 
+    const yOffset = stemDirection === 1 ? 2.5 : -3.5; 
 
     return {
       x: absPos.x - 0.5, // Center it slightly better
@@ -164,7 +164,9 @@ const render = () => {
   const endMeasure = props.startMeasure + props.measureCount - 1;
   
   // Set a good default zoom
-  osmd.Zoom = 1.4;
+  // osmd.Zoom = 0.7;
+  // osmd.Zoom = 0.9;
+  // osmd.Zoom = 1.4;
 
   osmd.setOptions({
     drawFromMeasureNumber: props.startMeasure,
