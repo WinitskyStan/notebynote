@@ -139,7 +139,7 @@ const handleFileSelect = () => {
     <div 
         v-if="showSettings" 
         @click.stop
-        class="absolute top-24 right-8 z-50 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 animate-in fade-in slide-in-from-top-4 duration-300"
+        class="absolute top-24 right-4 left-4 sm:left-auto sm:right-8 z-50 w-auto sm:w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 animate-in fade-in slide-in-from-top-4 duration-300"
     >
         <h3 class="font-serif text-xl text-brand-brown mb-4">Preferences</h3>
         <p class="text-xs text-gray-400 mb-6">Customize your practice session.</p>
