@@ -199,8 +199,7 @@ const handleFileSelect = () => {
         </div>
 
         <div 
-            @click="showNoteNames = !showNoteNames"
-            class="w-full bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden relative group cursor-pointer active:scale-[0.99] transition-transform"
+            class="w-full bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden relative group"
         >
             <ScoreDisplay 
                 :url="musicUrl" 
