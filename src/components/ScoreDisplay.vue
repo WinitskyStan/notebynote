@@ -224,11 +224,6 @@ onMounted(() => {
     <div v-if="!isReady" class="absolute inset-0 flex items-center justify-center bg-white/50">
         <div class="w-8 h-8 border-4 border-brand-brown/20 border-t-brand-brown rounded-full animate-spin"></div>
     </div>
-
-    <!-- Measure Number Indicator -->
-    <div class="absolute bottom-6 right-8 text-gray-100 font-serif text-8xl pointer-events-none select-none">
-        {{ startMeasure }}
-    </div>
   </div>
 </template>
 
