@@ -139,32 +139,42 @@ const handleFileSelect = () => {
     <div 
         v-if="showSettings" 
         @click.stop
-        class="fixed sm:absolute top-24 left-4 right-4 sm:left-auto sm:right-8 z-[100] w-auto sm:w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 animate-in fade-in slide-in-from-top-4 duration-300"
+        class="fixed sm:absolute top-24 left-1/2 -translate-x-1/2 sm:left-auto sm:right-8 sm:translate-x-0 z-[100] w-[calc(100%-2rem)] sm:w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 animate-in fade-in slide-in-from-top-4 duration-300"
     >
         <h3 class="font-serif text-xl text-brand-brown mb-4">Preferences</h3>
         <p class="text-xs text-gray-400 mb-6">Customize your practice session.</p>
         
         <div class="space-y-6">
             <div class="flex items-center justify-between gap-4">
-                <span class="text-sm font-medium text-gray-700 flex-1">Auto-hide on next</span>
-                <button 
-                    @click="autoHideOnNext = !autoHideOnNext"
-                    class="w-12 h-6 shrink-0 rounded-full transition-colors relative"
-                    :class="autoHideOnNext ? 'bg-brand-brown' : 'bg-gray-200'"
-                >
-                    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform" :class="autoHideOnNext ? 'translate-x-6' : ''"></div>
-                </button>
+                <span class="text-sm font-medium text-gray-700">Auto-hide on next</span>
+                <div class="flex p-1 bg-gray-100 rounded-lg shrink-0">
+                    <button 
+                        @click="autoHideOnNext = false" 
+                        class="px-3 py-1 rounded-md text-[10px] font-bold transition-all font-['Oswald']"
+                        :class="!autoHideOnNext ? 'bg-white shadow-sm text-brand-dark' : 'text-gray-400'"
+                    >OFF</button>
+                    <button 
+                        @click="autoHideOnNext = true" 
+                        class="px-3 py-1 rounded-md text-[10px] font-bold transition-all font-['Oswald']"
+                        :class="autoHideOnNext ? 'bg-brand-brown text-white shadow-sm' : 'text-gray-400'"
+                    >ON</button>
+                </div>
             </div>
 
             <div class="flex items-center justify-between gap-4">
-                <span class="text-sm font-medium text-gray-700 flex-1">Show note names</span>
-                <button 
-                    @click="showNoteNames = !showNoteNames"
-                    class="w-12 h-6 shrink-0 rounded-full transition-colors relative"
-                    :class="showNoteNames ? 'bg-brand-brown' : 'bg-gray-200'"
-                >
-                    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform" :class="showNoteNames ? 'translate-x-6' : ''"></div>
-                </button>
+                <span class="text-sm font-medium text-gray-700">Show note names</span>
+                <div class="flex p-1 bg-gray-100 rounded-lg shrink-0">
+                    <button 
+                        @click="showNoteNames = false" 
+                        class="px-3 py-1 rounded-md text-[10px] font-bold transition-all font-['Oswald']"
+                        :class="!showNoteNames ? 'bg-white shadow-sm text-brand-dark' : 'text-gray-400'"
+                    >OFF</button>
+                    <button 
+                        @click="showNoteNames = true" 
+                        class="px-3 py-1 rounded-md text-[10px] font-bold transition-all font-['Oswald']"
+                        :class="showNoteNames ? 'bg-brand-brown text-white shadow-sm' : 'text-gray-400'"
+                    >ON</button>
+                </div>
             </div>
 
             <div>
