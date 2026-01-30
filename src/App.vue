@@ -139,28 +139,28 @@ const handleFileSelect = () => {
     <div 
         v-if="showSettings" 
         @click.stop
-        class="absolute top-24 right-4 left-4 sm:left-auto sm:right-8 z-50 w-auto sm:w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 animate-in fade-in slide-in-from-top-4 duration-300"
+        class="fixed sm:absolute top-24 left-4 right-4 sm:left-auto sm:right-8 z-[100] w-auto sm:w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 animate-in fade-in slide-in-from-top-4 duration-300"
     >
         <h3 class="font-serif text-xl text-brand-brown mb-4">Preferences</h3>
         <p class="text-xs text-gray-400 mb-6">Customize your practice session.</p>
         
         <div class="space-y-6">
-            <div class="flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-700">Auto-hide on next</span>
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium text-gray-700 flex-1">Auto-hide on next</span>
                 <button 
                     @click="autoHideOnNext = !autoHideOnNext"
-                    class="w-12 h-6 rounded-full transition-colors relative"
+                    class="w-12 h-6 shrink-0 rounded-full transition-colors relative"
                     :class="autoHideOnNext ? 'bg-brand-brown' : 'bg-gray-200'"
                 >
                     <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform" :class="autoHideOnNext ? 'translate-x-6' : ''"></div>
                 </button>
             </div>
 
-            <div class="flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-700">Show note names</span>
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium text-gray-700 flex-1">Show note names</span>
                 <button 
                     @click="showNoteNames = !showNoteNames"
-                    class="w-12 h-6 rounded-full transition-colors relative"
+                    class="w-12 h-6 shrink-0 rounded-full transition-colors relative"
                     :class="showNoteNames ? 'bg-brand-brown' : 'bg-gray-200'"
                 >
                     <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform" :class="showNoteNames ? 'translate-x-6' : ''"></div>
