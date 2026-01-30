@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import { EyeOff } from 'lucide-vue-next';
 
@@ -82,6 +82,7 @@ const createLabelElement = (pitchName: string, position: {x: number, y: number})
 };
 
 const clearLabels = () => {
+  console.log("clear labels") ;
   const container = containerRef.value;
   if (!container) return;
 
@@ -134,7 +135,7 @@ const loadScore = async () => {
 
   if (!osmd) {
     osmd = new OpenSheetMusicDisplay(containerRef.value, {
-      autoResize: true,
+      autoResize: false, // Handle manually to sync labels
       backend: 'svg',
       drawingParameters: 'compacttight',
       drawPartNames: false,
@@ -194,8 +195,17 @@ const render = () => {
 watch(() => props.url, loadScore);
 watch(() => [props.startMeasure, props.measureCount, props.showNoteNames], render);
 
+const handleResize = () => {
+  render();
+};
+
 onMounted(() => {
   loadScore();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
