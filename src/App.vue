@@ -22,6 +22,31 @@ const showSettings = ref(false);
 const autoHideOnNext = ref(false);
 const showNoteNames = ref(false);
 
+// Touch state for swiping
+const touchStartX = ref(0);
+const touchEndX = ref(0);
+const minSwipeDistance = 50;
+
+const handleTouchStart = (e: TouchEvent) => {
+  touchStartX.value = e.changedTouches[0].screenX;
+};
+
+const handleTouchEnd = (e: TouchEvent) => {
+  touchEndX.value = e.changedTouches[0].screenX;
+  handleSwipe();
+};
+
+const handleSwipe = () => {
+  const distance = touchEndX.value - touchStartX.value;
+  if (Math.abs(distance) < minSwipeDistance) return;
+
+  if (distance > 0) {
+    prev();
+  } else {
+    next();
+  }
+};
+
 const progress = computed(() => {
   if (totalMeasures.value === 0) return 0;
   return (currentMeasure.value / totalMeasures.value) * 100;
@@ -106,7 +131,11 @@ const handleFileSelect = () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col items-center">
+  <div 
+    class="min-h-screen flex flex-col items-center"
+    @touchstart="handleTouchStart"
+    @touchend="handleTouchEnd"
+  >
     
     <!-- Header -->
     <header class="w-full max-w-6xl px-8 py-6 flex justify-between items-center relative z-40">
