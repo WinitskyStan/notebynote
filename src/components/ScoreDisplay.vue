@@ -51,6 +51,10 @@ const createLabelElement = (pitchName: string, position: {x: number, y: number})
   const container = containerRef.value;
   if (!container) return;
 
+  // Find the OSMD canvas/SVG container to ensure coordinates match the music
+  const svg = container.querySelector('svg');
+  const labelsParent = svg?.parentElement || container;
+
   const label = document.createElement('div');
   label.className = 'note-name-label';
   label.textContent = pitchName;
@@ -68,7 +72,7 @@ const createLabelElement = (pitchName: string, position: {x: number, y: number})
   label.style.marginLeft = '-20px'; 
 
   // Create or use a labels layer
-  let labelsLayer = container.querySelector('.note-labels-layer') as HTMLElement;
+  let labelsLayer = labelsParent.querySelector('.note-labels-layer') as HTMLElement;
   if (!labelsLayer) {
     labelsLayer = document.createElement('div');
     labelsLayer.className = 'note-labels-layer';
@@ -78,7 +82,7 @@ const createLabelElement = (pitchName: string, position: {x: number, y: number})
     labelsLayer.style.width = '100%';
     labelsLayer.style.height = '100%';
     labelsLayer.style.pointerEvents = 'none';
-    container.appendChild(labelsLayer);
+    labelsParent.appendChild(labelsLayer);
   }
 
   labelsLayer.appendChild(label);

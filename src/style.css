@@ -47,6 +47,7 @@ body {
   color: #c62828; /* Strong Red */
   text-shadow: 1px 1px 0px #fff, -1px -1px 0px #fff, 1px -1px 0px #fff, -1px 1px 0px #fff;
   letter-spacing: 0.8px;
+  line-height: 1;
   z-index: 10;
   transition: opacity 0.3s;
   pointer-events: none;
